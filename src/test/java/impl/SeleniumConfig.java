@@ -20,7 +20,7 @@ public class SeleniumConfig {
   public void setup() {
     manager = DriverManagerFactory.getManager(DriverType.CHROME);
     driver = manager.getDriver();
-    driver.get("https://www.aa.com/");
+    driver.get("https://www.united.com/");
     driver.manage().window().maximize();
   }
 
