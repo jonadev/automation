@@ -25,12 +25,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import org.junit.Assert;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import util.TestBase;
 
 public class Test extends TestBase {
 
-  @Given("^User is in the home page of American Airlines$")
-  public void user_is_in_the_home_page_of_American_Airlines() throws Throwable {
+  @Given("^User is in the home page of United Airlines$")
+   public void user_is_in_the_home_page_of_United_Airlines() throws Throwable {
     Assert.assertTrue(driver.getTitle().contains(UNITED_AIRLINES_TITLE));
   }
 
@@ -42,15 +44,17 @@ public class Test extends TestBase {
 
     //Select EZE
     driver.findElement(ORIGIN_INPUT_LOCATOR).sendKeys(ORIGIN_BUE);
-    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    List<WebElement> originList = driver.findElements(ORIGIN_DROPDOWN_LOCATOR);
+    WebDriverWait originWait = new WebDriverWait(driver, 5);
+    List<WebElement> originList = originWait
+        .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(ORIGIN_DROPDOWN_LOCATOR));
     originList.stream().filter(webElement -> webElement.getAttribute("aria-label").contains("EZE"))
         .findFirst().orElseThrow().click();
 
     //Select MIA
     driver.findElement(DESTINATION_INPUT_LOCATOR).sendKeys(DESTINATION_MIA);
-    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    List<WebElement> destinationList = driver.findElements(DESTINATION_DROPDOWN_LOCATOR);
+    WebDriverWait destinationWait = new WebDriverWait(driver, 10);
+    List<WebElement> destinationList = destinationWait
+        .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(DESTINATION_DROPDOWN_LOCATOR));
     destinationList.stream().filter(webElement -> webElement.getText().contains("MIA"))
         .findFirst().orElseThrow().click();
 
@@ -70,7 +74,8 @@ public class Test extends TestBase {
 
   @Then("^Flights available should be displayed$")
   public void flights_available_should_be_displayed() throws Throwable {
-    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    WebElement flightsResultList = new WebDriverWait(driver, 10)
+        .until(ExpectedConditions.visibilityOfElementLocated(FLIGHT_RESULT_LIST_LOCATOR));
     Assert.assertEquals(0, driver.findElements(ERROR_NO_RESULT_SECTION_LOCATOR).size());
     Assert.assertTrue(driver.findElements(FLIGHT_RESULT_LIST_LOCATOR).size() > 0);
 
